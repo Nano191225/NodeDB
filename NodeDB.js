@@ -2,13 +2,18 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NodeDB = void 0;
 const fs_1 = __importDefault(require("fs"));
-module.exports = class Database extends Map {
+class NodeDB extends Map {
     constructor(name) {
         super();
         if (typeof name !== "string")
             throw new TypeError("Database name must be a string");
         this.name = name;
+        if (!fs_1.default.existsSync("./db/")) {
+            fs_1.default.mkdirSync("./db/");
+        }
         if (!fs_1.default.existsSync(`./db/${name}/`)) {
             fs_1.default.mkdirSync(`./db/${name}/`);
         }
@@ -16,7 +21,7 @@ module.exports = class Database extends Map {
     }
     load() {
         const files = fs_1.default.readdirSync(`./db/${this.name}/`);
-        files.forEach(file => {
+        files.forEach((file) => {
             const data = fs_1.default.readFileSync(`./db/${this.name}/${file}`, {
                 encoding: "utf8",
             });
@@ -46,4 +51,5 @@ module.exports = class Database extends Map {
         if (key.search(/[^a-z0-9_]/gi) !== -1)
             throw new TypeError("Key must only contain alphanumeric characters and underscores");
     }
-};
+}
+exports.NodeDB = NodeDB;
