@@ -1,6 +1,6 @@
 import fs from "fs";
 
-export = class Database extends Map {
+export class NodeDB extends Map {
     private name: string;
     constructor(name: string) {
         super();
@@ -8,6 +8,10 @@ export = class Database extends Map {
         if (typeof name !== "string")
             throw new TypeError("Database name must be a string");
         this.name = name;
+
+        if (!fs.existsSync("./db/")) {
+            fs.mkdirSync("./db/");
+        }
 
         if (!fs.existsSync(`./db/${name}/`)) {
             fs.mkdirSync(`./db/${name}/`);
@@ -18,7 +22,7 @@ export = class Database extends Map {
 
     public load() {
         const files = fs.readdirSync(`./db/${this.name}/`);
-        files.forEach(file => {
+        files.forEach((file) => {
             const data = fs.readFileSync(`./db/${this.name}/${file}`, {
                 encoding: "utf8",
             });
@@ -60,4 +64,4 @@ export = class Database extends Map {
                 "Key must only contain alphanumeric characters and underscores"
             );
     }
-};
+}
