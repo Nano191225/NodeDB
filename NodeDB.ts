@@ -9,18 +9,13 @@ export class NodeDB extends Map {
             throw new TypeError("Database name must be a string");
         this.name = name;
 
-        if (!fs.existsSync("./db/")) {
-            fs.mkdirSync("./db/");
-        }
-
-        if (!fs.existsSync(`./db/${name}/`)) {
-            fs.mkdirSync(`./db/${name}/`);
-        }
-
         this.load();
     }
 
     public load() {
+        if (!fs.existsSync("./db/")) fs.mkdirSync("./db/");
+        if (!fs.existsSync(`./db/${name}/`)) fs.mkdirSync(`./db/${name}/`);
+        
         const files = fs.readdirSync(`./db/${this.name}/`);
         files.forEach((file) => {
             const data = fs.readFileSync(`./db/${this.name}/${file}`, {
