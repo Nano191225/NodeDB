@@ -5,17 +5,16 @@ export class NodeDB extends Map {
     constructor(name: string) {
         super();
 
-        if (typeof name !== "string")
-            throw new TypeError("Database name must be a string");
+        if (typeof name !== "string") throw new TypeError("Database name must be a string");
         this.name = name;
+
+        if (!fs.existsSync("./db/")) fs.mkdirSync("./db/");
+        if (!fs.existsSync(`./db/${name}/`)) fs.mkdirSync(`./db/${name}/`);
 
         this.load();
     }
 
     public load() {
-        if (!fs.existsSync("./db/")) fs.mkdirSync("./db/");
-        if (!fs.existsSync(`./db/${name}/`)) fs.mkdirSync(`./db/${name}/`);
-        
         const files = fs.readdirSync(`./db/${this.name}/`);
         files.forEach((file) => {
             const data = fs.readFileSync(`./db/${this.name}/${file}`, {
@@ -30,10 +29,7 @@ export class NodeDB extends Map {
         this.keyCheck(key);
 
         super.set(key, value);
-        fs.writeFileSync(
-            `./db/${this.name}/${key}.json`,
-            JSON.stringify(value, null, 4)
-        );
+        fs.writeFileSync(`./db/${this.name}/${key}.json`, JSON.stringify(value, null, 4));
         return this;
     }
 
@@ -51,12 +47,9 @@ export class NodeDB extends Map {
     }
 
     private keyCheck(key: string) {
-        if (typeof key !== "string")
-            throw new TypeError("Database key must be a string");
+        if (typeof key !== "string") throw new TypeError("Database key must be a string");
 
-        if (key.search(/[^a-z0-9_]/gi) !== -1)
-            throw new TypeError(
-                "Key must only contain alphanumeric characters and underscores"
-            );
+        if (key.search(/[^a-z0-9_-.]/gi) !== -1)
+            throw new TypeError("Key must only contain alphanumeric characters and underscores");
     }
 }
